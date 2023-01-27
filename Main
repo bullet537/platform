@@ -1,0 +1,146 @@
+import pygame
+from pygame.locals import*
+
+pygame.init()
+
+screen = pygame.display.set_mode((1200, 800))
+global player_rect
+global rect
+global x
+global y
+global sx
+global sy
+scrollx = 0
+scrolly = 0
+x = 560
+y = 0
+sx = 0
+sy = 0
+bx = []
+by = []
+bw = []
+bh = []
+pw = 80
+ph = 150
+def addplatform(x, y, w, h):
+    bx.append(x)
+    by.append(y)
+    bw.append(w)
+    bh.append(h)
+
+addplatform(560, 450, 300, 80)
+
+addplatform(560, 100, 300, 80)
+
+addplatform(900, 450, 300, 80)
+
+player_rect = Rect(x, y, 80, 80)
+rect = Rect(560, 450, 300, 80)
+def getrect():
+    global player_rect
+    global rect
+    global x
+    global y
+    global collide
+    player_rect = Rect(x, y, pw, ph)
+    rect = Rect(560, 450, 300, 80)
+    collide = pygame.Rect.colliderect(rect, player_rect)
+    for i in range(len(bx)):
+        rect = Rect(bx[i], by[i], bw[i], bh[i])
+        collide = pygame.Rect.colliderect(rect, player_rect)
+        if collide:
+            break
+getrect()
+
+
+
+
+
+running = True
+
+while running:
+    gameWindow = pygame.display.set_mode((1200, 800))
+    
+
+
+    pygame.time.delay(30)
+    key = pygame.key.get_pressed()
+
+
+    
+    getrect()
+    def movey(amounty):
+        global sy
+        global y
+        y += amounty
+        getrect()
+        if collide:
+            while collide:
+                if sy > 0:
+                    y -= 1
+                else:
+                    y += 1
+                getrect()
+            if key[pygame.K_UP] == True:
+                sy = -30
+            else:
+                sy = 0   
+                
+                
+            
+           
+    
+    def movex(amountx):
+        global sx
+        global sy
+        global x
+        global y
+        global collide
+        x += amountx
+        getrect()
+        if collide:
+            while collide:
+                if sx > 0:
+                    x -= 1
+                else:
+                    x += 1
+                getrect()
+            sx = 0   
+               
+             
+            
+
+
+    
+    
+    if key[pygame.K_RIGHT] == True:
+        sx += 2
+    if key[pygame.K_LEFT] == True:
+        sx -= 2    
+    sx = sx * .9
+    movex(sx)
+    sy += 1.5
+    if sy > 20:
+        sy = 20
+    
+    movey(sy)
+    
+
+    scrollx = x
+    scrolly = y
+    
+    
+    
+
+    pygame.draw.rect(gameWindow, (250,250,250), (x-scrollx + 600 + pw, y-scrolly+400-ph, pw, ph), 0)
+    for i in range(len(bx)):
+        pygame.draw.rect(gameWindow, (50,150,50), (bx[i] - scrollx+ 600 + pw, by[i] - scrolly+400-ph, bw[i], bh[i]), 0)
+
+
+
+
+    pygame.display.update()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+pygame.quit() 
